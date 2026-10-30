@@ -11,9 +11,13 @@ services:
       - key: OMP_NUM_THREADS
         value: "1"
       - key: ALLOWED_ORIGINS
-        value: "https://verijob-frontend.onrender.com,http://localhost:5173"
+        value: "https://verijob-frontend.onrender.com,http://localhost:5173,*"
       - key: PORT
         value: "8000"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: verijob-db
+          property: connectionString
     healthCheckPath: /api/health
 
   # React Vite Frontend Static Site
@@ -32,3 +36,9 @@ services:
           type: web
           name: verijob-backend
           property: host
+
+databases:
+  - name: verijob-db
+    plan: free
+    databaseName: verijob
+    user: verijob_user

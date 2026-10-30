@@ -5,7 +5,7 @@ router = APIRouter(prefix="/methodology", tags=["Methodology"])
 
 @router.get("", response_model=MethodologyResponse)
 def get_methodology():
-    """Provides transparent documentation of AI/ML algorithms and heuristic scoring rules."""
+    """Provides transparent documentation of AI/ML algorithms, heuristic scoring rules, and dataset disclosures."""
     return MethodologyResponse(
         title="AI-Based Fake Job and Internship Detection Methodology",
         pipeline_overview=(
@@ -20,7 +20,9 @@ def get_methodology():
             "ngram_range": "(1, 2) unigrams and bigrams",
             "max_features": 2500,
             "training_objective": "Binary Classification (0 = Legitimate, 1 = Fraudulent/Suspicious)",
-            "interpretability": "Log-odds coefficient weights mapped back to vocabulary tokens"
+            "interpretability": "Log-odds coefficient weights mapped back to vocabulary tokens",
+            "benchmark_dataset_provenance": "16 curated educational benchmark cases (8 authentic engineering postings from Datadog, Thoughtworks, AI2, Canva, CrowdStrike, Spotify, Red Hat, MongoDB; and 8 documented scam archetypes cataloged from FTC, FBI IC3, and university placement advisories)",
+            "dataset_limitations": "The current demonstration dataset serves as an educational reference testbed demonstrating pipeline reproducibility and token interpretability. It must not be cited as absolute proof of universal accuracy across arbitrary job markets."
         },
         rule_heuristics=[
             {

@@ -118,6 +118,34 @@ export const MethodologyPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Dataset Provenance & Academic Scope Disclosure */}
+      <div className="glass-panel rounded-2xl p-6 sm:p-8 border-slate-800 bg-slate-900/60">
+        <h3 className="text-base font-bold text-white mb-2 flex items-center space-x-2">
+          <FileText className="w-5 h-5 text-cyan-400" />
+          <span>Benchmark Dataset Provenance & Scope Disclosure</span>
+        </h3>
+        <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
+          To ensure strict ethical compliance and avoid fabricated metrics, the prototype classifier is trained on a transparent, curated benchmark reference set of 16 documented job postings:
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
+            <span className="font-bold text-emerald-300 block mb-1">Authentic Cohort (8 Postings)</span>
+            <p className="text-slate-400 leading-relaxed">
+              Curated from verified corporate technical careers portals including Datadog, Thoughtworks, AI2, Canva, CrowdStrike, Spotify, Red Hat, and MongoDB.
+            </p>
+          </div>
+          <div className="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
+            <span className="font-bold text-rose-300 block mb-1">Documented Fraud Archetypes (8 Postings)</span>
+            <p className="text-slate-400 leading-relaxed">
+              Synthesized from active consumer warnings and alerts published by the Federal Trade Commission (FTC), FBI IC3 Wire Fraud bulletins, and university career center advisories.
+            </p>
+          </div>
+        </div>
+        <p className="mt-4 text-xs text-slate-400 italic border-l-2 border-cyan-500/50 pl-3">
+          <strong>Academic Disclosure:</strong> This 16-sample benchmark validates pipeline architecture, feature extraction stability, and coefficient interpretability for college mini project demonstration. It is not presented as a claim of universal real-world generalization across arbitrary industry domains.
+        </p>
+      </div>
+
       {/* Heuristic Rules Matrix */}
       <div className="glass-panel rounded-2xl p-6 sm:p-8 border-slate-800">
         <h3 className="text-base font-bold text-white mb-4 flex items-center space-x-2">

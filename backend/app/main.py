@@ -1,4 +1,5 @@
 import os
+import logging
 # Enforce thread control for Windows stability
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
@@ -8,11 +9,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from backend.app.config import settings
 from backend.app.database import init_db
 from backend.app.ml.model import get_engine
 from backend.app.utils.security import SecurityHeadersMiddleware
 from backend.app.routes import health, analyze, history, reports, methodology
+
+logger = logging.getLogger("verijob")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -58,8 +63,23 @@ def root():
         "methodology": f"{settings.API_PREFIX}/methodology"
     }
 
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()}
+    )
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled server error: {exc}", exc_info=True)
     return JSONResponse(
         status_code=500,
         content={

@@ -88,6 +88,7 @@ def analyze_job(
         risk_level=prediction["risk_level"],
         ml_score=prediction["ml_score"],
         rule_score=prediction["rule_score"],
+        model_mode=prediction["model_mode"],
         warning_signs_json=json.dumps(prediction["warning_signs"]),
         explanations_json=json.dumps(prediction["explanations"]),
         recommendations_json=json.dumps(prediction["recommendations"]),

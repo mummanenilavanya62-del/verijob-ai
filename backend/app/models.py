@@ -25,6 +25,7 @@ class AnalysisRecord(Base):
     risk_level = Column(String(20), nullable=False)  # Low, Medium, High
     ml_score = Column(Float, nullable=False, default=0.0)
     rule_score = Column(Float, nullable=False, default=0.0)
+    model_mode = Column(String(100), nullable=True, default="Trained ML Model (TF-IDF + Logistic Regression)")
     
     # Serialized JSON representations
     warning_signs_json = Column(Text, nullable=False, default="[]")

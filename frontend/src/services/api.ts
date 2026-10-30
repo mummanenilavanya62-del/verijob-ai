@@ -7,7 +7,16 @@ import {
   ScamReportCreate
 } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api';
+function getApiBase(): string {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl || !envUrl.trim()) {
+    return '/api';
+  }
+  const trimmed = envUrl.trim().replace(/\/+$/, '');
+  return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+}
+
+const API_BASE = getApiBase();
 
 export function getSessionId(): string {
   let sessionId = localStorage.getItem('verijob_session_id');
@@ -16,6 +25,18 @@ export function getSessionId(): string {
     localStorage.setItem('verijob_session_id', sessionId);
   }
   return sessionId;
+}
+
+function parseErrorMessage(errorData: any, status: number, defaultMsg: string): string {
+  if (!errorData) return `HTTP ${status}: ${defaultMsg}`;
+  if (typeof errorData.detail === 'string') return errorData.detail;
+  if (Array.isArray(errorData.detail) && errorData.detail.length > 0) {
+    return errorData.detail
+      .map((item: any) => item.msg || item.message || JSON.stringify(item))
+      .join('; ');
+  }
+  if (errorData.message && typeof errorData.message === 'string') return errorData.message;
+  return `HTTP ${status}: ${defaultMsg}`;
 }
 
 export async function analyzeJob(payload: JobAnalysisRequest): Promise<JobAnalysisResponse> {
@@ -32,7 +53,7 @@ export async function analyzeJob(payload: JobAnalysisRequest): Promise<JobAnalys
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.detail || `Server returned ${res.status}: Failed to analyze job posting`);
+    throw new Error(parseErrorMessage(errorData, res.status, 'Failed to analyze job posting'));
   }
 
   return res.json();
@@ -78,7 +99,7 @@ export async function submitScamReport(report: ScamReportCreate): Promise<{ stat
   });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.detail || 'Failed to submit report');
+    throw new Error(parseErrorMessage(errorData, res.status, 'Failed to submit report'));
   }
   return res.json();
 }

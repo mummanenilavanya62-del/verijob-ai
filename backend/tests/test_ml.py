@@ -2,7 +2,7 @@ import pytest
 from backend.app.ml.dataset import load_benchmark_records, ensure_dataset_exists
 from backend.app.ml.train import train_job_classifier
 from backend.app.ml.evaluate import evaluate_model
-from backend.app.ml.model import get_engine
+from backend.app.ml.model import FraudDetectionEngine, get_engine
 
 def test_benchmark_dataset_integrity():
     path = ensure_dataset_exists()
@@ -56,3 +56,22 @@ def test_prediction_engine_hybrid():
     )
     assert legit_result["risk_score"] <= 35
     assert legit_result["risk_level"] == "Low"
+
+def test_ml_fallback_when_model_missing():
+    fallback_engine = FraudDetectionEngine.__new__(FraudDetectionEngine)
+    fallback_engine.classifier = None
+    fallback_engine.vectorizer = None
+    fallback_engine.mode = "Rule-Based Preliminary Engine (Heuristic Fallback)"
+
+    result = fallback_engine.predict_risk(
+        job_title="Remote Typist",
+        company_name="Apex Global",
+        job_description="URGENT: No interview required! 100% guarantee selection. Earn $500 daily. Must pay $150 refundable registration fee on Telegram.",
+        salary_stipend="$500 / day",
+        recruiter_email="apex.hiring@gmail.com"
+    )
+    assert result["model_mode"] == "Rule-Based Preliminary Engine (Heuristic Fallback)"
+    assert result["risk_score"] >= 70
+    assert result["risk_level"] == "High"
+    assert len(result["warning_signs"]) > 0
+    assert result["ml_score"] == 0.0
